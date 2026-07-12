@@ -1,0 +1,284 @@
+{
+  "entities": {
+    "Usuario": {
+      "title": "Usuario",
+      "description": "Perfil del postulante policial registrado en el sistema.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "UID de Firebase Authentication del usuario."
+        },
+        "nombre": {
+          "type": "string",
+          "description": "Nombre completo del postulante."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Correo electrónico institucional o personal."
+        },
+        "rol": {
+          "type": "string",
+          "enum": ["USUARIO", "ADMINISTRADOR"],
+          "description": "Rol de acceso del usuario."
+        },
+        "fecha_registro": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de registro en formato ISO."
+        }
+      },
+      "required": ["uid", "nombre", "email", "rol", "fecha_registro"]
+    },
+    "Pregunta": {
+      "title": "Pregunta",
+      "description": "Pregunta individual de legislación o conocimientos policiales del banco de preguntas.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único de la pregunta."
+        },
+        "categoria": {
+          "type": "string",
+          "description": "Categoría general (p. ej., Constitución, Ley PNP, etc.)."
+        },
+        "tema": {
+          "type": "string",
+          "description": "Tema específico de estudio de la pregunta."
+        },
+        "pregunta": {
+          "type": "string",
+          "description": "Texto detallado de la interrogante planteada."
+        },
+        "alternativa_a": {
+          "type": "string",
+          "description": "Alternativa de respuesta A."
+        },
+        "alternativa_b": {
+          "type": "string",
+          "description": "Alternativa de respuesta B."
+        },
+        "alternativa_c": {
+          "type": "string",
+          "description": "Alternativa de respuesta C."
+        },
+        "alternativa_d": {
+          "type": "string",
+          "description": "Alternativa de respuesta D."
+        },
+        "alternativa_e": {
+          "type": "string",
+          "description": "Alternativa de respuesta E."
+        },
+        "respuesta_correcta": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "E"],
+          "description": "La letra correspondiente a la alternativa correcta."
+        },
+        "explicacion": {
+          "type": "string",
+          "description": "Explicación didáctica y base legal de la respuesta."
+        },
+        "dificultad": {
+          "type": "string",
+          "enum": ["Fácil", "Medio", "Difícil"],
+          "description": "Grado de dificultad asignado."
+        }
+      },
+      "required": [
+        "categoria",
+        "tema",
+        "pregunta",
+        "alternativa_a",
+        "alternativa_b",
+        "alternativa_c",
+        "alternativa_d",
+        "alternativa_e",
+        "respuesta_correcta",
+        "explicacion",
+        "dificultad"
+      ]
+    },
+    "ExamenIntento": {
+      "title": "ExamenIntento",
+      "description": "Registro histórico del intento y calificación de un simulacro realizado por un postulante.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único del intento de examen."
+        },
+        "usuario_id": {
+          "type": "string",
+          "description": "UID del postulante que realizó el examen."
+        },
+        "usuario_nombre": {
+          "type": "string",
+          "description": "Nombre del postulante para reportes rápidos."
+        },
+        "fecha": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora del intento en formato ISO."
+        },
+        "cantidad_preguntas": {
+          "type": "integer",
+          "description": "Número total de preguntas contenidas en el examen."
+        },
+        "respuestas_correctas": {
+          "type": "integer",
+          "description": "Cantidad de respuestas correctas logradas."
+        },
+        "respuestas_incorrectas": {
+          "type": "integer",
+          "description": "Cantidad de respuestas incorrectas."
+        },
+        "sin_responder": {
+          "type": "integer",
+          "description": "Cantidad de preguntas que se dejaron en blanco."
+        },
+        "puntaje": {
+          "type": "integer",
+          "description": "Puntaje final calculado de 0 a 100."
+        },
+        "tiempo_total": {
+          "type": "integer",
+          "description": "Tiempo límite original en segundos."
+        },
+        "tiempo_utilizado": {
+          "type": "integer",
+          "description": "Tiempo real consumido por el postulante en segundos."
+        },
+        "titulo_simulacro": {
+          "type": "string",
+          "description": "Título si corresponde a un simulacro personalizado oficial."
+        },
+        "respuestas": {
+          "type": "array",
+          "description": "Arreglo detallado de las respuestas ingresadas por el postulante."
+        }
+      },
+      "required": [
+        "id",
+        "usuario_id",
+        "usuario_nombre",
+        "fecha",
+        "cantidad_preguntas",
+        "respuestas_correctas",
+        "respuestas_incorrectas",
+        "sin_responder",
+        "puntaje",
+        "tiempo_total",
+        "tiempo_utilizado",
+        "respuestas"
+      ]
+    },
+    "SimulacroPersonalizado": {
+      "title": "SimulacroPersonalizado",
+      "description": "Simulacro oficial pre-configurado y publicado por administradores.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único del simulacro."
+        },
+        "titulo": {
+          "type": "string",
+          "description": "Título oficial del examen."
+        },
+        "descripcion": {
+          "type": "string",
+          "description": "Descripción de la cobertura o materias evaluadas."
+        },
+        "categoria": {
+          "type": "string",
+          "description": "Materia o tema principal asignado."
+        },
+        "preguntas_ids": {
+          "type": "array",
+          "description": "Lista de IDs de preguntas que componen el simulacro."
+        },
+        "tiempo_limite": {
+          "type": "integer",
+          "description": "Tiempo límite permitido en minutos."
+        },
+        "cantidad_preguntas": {
+          "type": "integer",
+          "description": "Número de preguntas."
+        },
+        "fecha_creacion": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de publicación del simulacro."
+        }
+      },
+      "required": [
+        "titulo",
+        "descripcion",
+        "categoria",
+        "preguntas_ids",
+        "tiempo_limite",
+        "cantidad_preguntas",
+        "fecha_creacion"
+      ]
+    },
+    "TemaOficial": {
+      "title": "TemaOficial",
+      "description": "Tema o balota oficial del temario del examen.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID numérico correlativo del tema."
+        },
+        "nombre": {
+          "type": "string",
+          "description": "Nombre completo de la balota o tema."
+        },
+        "abreviatura": {
+          "type": "string",
+          "description": "Abreviatura para categorización y filtros."
+        },
+        "cantidadPreguntas": {
+          "type": "integer",
+          "description": "Cantidad de preguntas cargadas en este tema."
+        },
+        "rango": {
+          "type": "string",
+          "description": "Rango correlativo o intervalo de numeración."
+        }
+      },
+      "required": [
+        "id",
+        "nombre",
+        "abreviatura",
+        "cantidadPreguntas",
+        "rango"
+      ]
+    }
+  },
+  "firestore": {
+    "usuarios/{userId}": {
+      "schema": "Usuario",
+      "description": "Información de cuenta y rol de cada postulante o administrador."
+    },
+    "preguntas/{preguntaId}": {
+      "schema": "Pregunta",
+      "description": "Colección global del banco de preguntas legales y constitucionales."
+    },
+    "intentos/{intentoId}": {
+      "schema": "ExamenIntento",
+      "description": "Resultados de simulacros guardados por los usuarios."
+    },
+    "simulacros/{simulacroId}": {
+      "schema": "SimulacroPersonalizado",
+      "description": "Exámenes oficiales diseñados por el personal administrador."
+    },
+    "temas/{temaId}": {
+      "schema": "TemaOficial",
+      "description": "Temas oficiales cargados en el sistema."
+    }
+  }
+}

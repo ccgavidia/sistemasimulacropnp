@@ -1,0 +1,6 @@
+{
+  "name": "Simulador de Examen PNP",
+  "description": "Sistema de simulación de exámenes de ascenso para suboficiales de la Policía Nacional del Perú, con banco de preguntas oficial, estadísticas y tutoría legal con Inteligencia Artificial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

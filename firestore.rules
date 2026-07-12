@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == "ccgavidia123@gmail.com" || 
+        request.auth.token.email == "admin@siecopol.com" ||
+        request.auth.token.email == "Ccgavidia123@gmail.com" ||
+        request.auth.token.email == "Admin@siecopol.com" ||
+        request.auth.token.email == "CCGAVIDIA123@GMAIL.COM" ||
+        request.auth.token.email == "ADMIN@SIECOPOL.COM" ||
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && (
+          get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "ADMINISTRADOR" || 
+          get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "Administrador"
+        ))
+      );
+    }
+
+    // 1. Usuarios Collection
+    match /usuarios/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 2. Preguntas Collection
+    match /preguntas/{preguntaId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 3. Intentos Collection
+    match /intentos/{intentoId} {
+      allow read, write: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.usuario_id == request.auth.uid;
+      allow read: if isSignedIn() && (resource == null || resource.data.usuario_id == request.auth.uid);
+    }
+
+    // 4. Simulacros Collection
+    match /simulacros/{simulacroId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 5. Temas Collection
+    match /temas/{temaId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 6. Config Collection
+    match /config/{configId} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}
