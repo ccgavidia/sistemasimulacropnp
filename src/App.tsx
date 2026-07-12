@@ -30,7 +30,13 @@ import DescargasView from "./components/DescargasView";
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<Usuario | null>(null);
-  const [authChecking, setAuthChecking] = useState(true);
+  const [authChecking, setAuthChecking] = useState(() => {
+    try {
+      return Object.keys(localStorage).some((key) => key.startsWith("firebase:authUser"));
+    } catch {
+      return true;
+    }
+  });
   const [initError, setInitError] = useState<string | null>(null);
   
   // Tab navigation

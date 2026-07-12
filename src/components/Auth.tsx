@@ -146,9 +146,27 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         // If missing, create a default user profile
         const emailLower = email.toLowerCase().trim();
         const isAdmin = emailLower === "ccgavidia123@gmail.com";
+        
+        let parsedNombre = "Postulante";
+        let parsedApellidos = "";
+        
+        if (userCredential.user.displayName) {
+          const parts = userCredential.user.displayName.trim().split(/\s+/);
+          if (parts.length > 1) {
+            // Split into name (first parts) and surname (last part or last two parts if typical)
+            parsedNombre = parts.slice(0, Math.max(1, parts.length - 1)).join(" ");
+            parsedApellidos = parts.slice(Math.max(1, parts.length - 1)).join(" ");
+          } else if (parts.length === 1) {
+            parsedNombre = parts[0];
+          }
+        } else if (email) {
+          parsedNombre = email.split("@")[0].toUpperCase();
+        }
+
         const newUser: Usuario = {
           uid,
-          nombre: isAdmin ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : (userCredential.user.displayName || email.split("@")[0] || "Postulante"),
+          nombre: isAdmin ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : parsedNombre,
+          apellidos: parsedApellidos,
           email,
           rol: isAdmin ? RolUsuario.ADMINISTRADOR : rol, // Use currently selected role
           fecha_registro: new Date().toISOString(),
