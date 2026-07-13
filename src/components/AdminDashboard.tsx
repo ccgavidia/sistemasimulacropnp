@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { collection, doc, addDoc, setDoc, deleteDoc, getDocs, writeBatch } from "firebase/firestore";
 import { Plus, Trash2, Edit2, ShieldAlert, Users, PlusCircle, CheckCircle, FileUp, Database, Brain, Sparkles, X, Filter, RefreshCw } from "lucide-react";
-import { Pregunta, Usuario, RolUsuario, SimulacroPersonalizado } from "../types";
+import { Pregunta, Usuario, RolUsuario, SimulacroPersonalizado, DocumentoDescarga } from "../types";
 import { temarioOficial } from "../data/temarioOficial";
 import { initialQuestions } from "../data/initialQuestions";
 import * as XLSX from "xlsx";
@@ -70,6 +70,57 @@ const findTopicByNum = (num: number, availableTemas: any[]): any => {
     }
   }
   return null;
+};
+
+// Safe date parsing and formatting helpers
+const formatFechaDoc = (fechaInput: any): string => {
+  if (!fechaInput) return "N/A";
+  try {
+    if (typeof fechaInput.toDate === "function") {
+      return fechaInput.toDate().toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+    if (fechaInput && typeof fechaInput === "object" && "seconds" in fechaInput) {
+      return new Date(fechaInput.seconds * 1000).toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+    const date = new Date(fechaInput);
+    if (!isNaN(date.getTime())) {
+      return date.toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+  } catch (err) {
+    console.error("Error parsing date:", err);
+  }
+  return "N/A";
+};
+
+const formatFechaUsuario = (fechaInput: any): string => {
+  if (!fechaInput) return "N/A";
+  try {
+    if (typeof fechaInput.toDate === "function") {
+      return fechaInput.toDate().toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+    if (fechaInput && typeof fechaInput === "object" && "seconds" in fechaInput) {
+      return new Date(fechaInput.seconds * 1000).toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+    const date = new Date(fechaInput);
+    if (!isNaN(date.getTime())) {
+      return date.toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+  } catch (err) {
+    console.error("Error parsing full date:", err);
+  }
+  return "N/A";
+};
+
+const getSafeTimeValue = (fecha: any): number => {
+  if (!fecha) return 0;
+  if (typeof fecha.toDate === "function") {
+    return fecha.toDate().getTime();
+  }
+  if (fecha && typeof fecha === "object" && "seconds" in fecha) {
+    return fecha.seconds * 1000;
+  }
+  const t = new Date(fecha).getTime();
+  return isNaN(t) ? 0 : t;
 };
 
 interface AdminDashboardProps {
@@ -143,22 +194,39 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
 
   const fetchAdminData = async () => {
     setLoading(true);
+    let usersLoaded = false;
+    let mocksLoaded = false;
+
+    // 1. Fetch Users
     try {
-      // 1. Fetch Users
       const usersSnapshot = await getDocs(collection(db, "usuarios"));
       const usersList = usersSnapshot.docs.map((doc) => doc.data() as Usuario);
       setUsers(usersList);
+      usersLoaded = true;
+    } catch (err: any) {
+      console.error("Error loading admin users:", err);
+    }
 
-      // 2. Fetch Mocks
+    // 2. Fetch Mocks
+    try {
       const mocksSnapshot = await getDocs(collection(db, "simulacros"));
       const mocksList = mocksSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as SimulacroPersonalizado[];
       setCreatedMocks(mocksList);
+      mocksLoaded = true;
     } catch (err: any) {
-      console.error("Error loading admin dashboard data:", err);
-      showMsg(`Error al cargar datos del administrador: ${err.message || err}`, "error");
-    } finally {
-      setLoading(false);
+      console.error("Error loading admin simulacros:", err);
     }
+
+    if (!usersLoaded && !mocksLoaded) {
+      showMsg("Error al cargar datos del administrador: Permisos insuficientes.", "error");
+    } else if (!usersLoaded || !mocksLoaded) {
+      const failed = [];
+      if (!usersLoaded) failed.push("Usuarios");
+      if (!mocksLoaded) failed.push("Simulacros");
+      showMsg(`Cargado parcialmente. Error al obtener: ${failed.join(", ")}`, "error");
+    }
+
+    setLoading(false);
   };
 
   // CRUD Question operations
@@ -1532,7 +1600,7 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
                     <td className="px-6 py-4 font-bold text-gray-900">{targetUser.nombre}</td>
                     <td className="px-6 py-4 text-gray-600">{targetUser.email}</td>
                     <td className="px-6 py-4 text-xs text-gray-400">
-                      {new Date(targetUser.fecha_registro).toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      {formatFechaUsuario(targetUser.fecha_registro)}
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`inline-block font-extrabold px-2.5 py-0.5 rounded text-[10px] uppercase ${

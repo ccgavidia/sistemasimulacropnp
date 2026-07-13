@@ -175,7 +175,7 @@ export default function MiHistorial({ user, questions }: MiHistorialProps) {
             </p>
           </div>
           <a
-            href="https://wa.me/51956784321?text=Hola%20Coronel%20PNP%20CCGAVIDIA,%20solicito%20el%20Acceso%20Completo%20para%20el%20sistema%20de%20simulacros%20SIECOPOL."
+            href="https://wa.me/51956784321?text=Hola%20Coronel%20PNP%20CCGAVIDIA,%20solicito%20el%20Acceso%20Completo%20para%20el%20sistema%20de%20simulacros%20SIEXPOL."
             target="_blank"
             rel="noopener noreferrer"
             className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl text-xs flex items-center gap-1.5 shrink-0 transition-all shadow-md hover:scale-[1.01] cursor-pointer"

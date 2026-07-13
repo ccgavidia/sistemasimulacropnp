@@ -470,7 +470,7 @@ export default function ExamResults({ attempt, questions, onBackToDashboard }: E
 
               {/* Validation Footnotes */}
               <p className="text-[10px] text-slate-500 font-semibold leading-relaxed text-justify">
-                (*) De acuerdo al manual de SIECOPOL, las respuestas no contestadas quedan registradas con la marca de un asterisco (*) en señal de omisión voluntaria por parte del postulante, no computando puntos para la calificación final del examen de conocimientos. El presente documento virtual tiene validez legal de preparación y es emitido en la plataforma de simulación.
+                (*) De acuerdo al manual de SIEXPOL, las respuestas no contestadas quedan registradas con la marca de un asterisco (*) en señal de omisión voluntaria por parte del postulante, no computando puntos para la calificación final del examen de conocimientos. El presente documento virtual tiene validez legal de preparación y es emitido en la plataforma de simulación.
               </p>
 
               {/* QR and Auth Barcode Row */}
@@ -478,7 +478,7 @@ export default function ExamResults({ attempt, questions, onBackToDashboard }: E
                 <div className="flex items-center gap-3 bg-slate-50 p-2.5 rounded border border-slate-200">
                   <QrCode className="h-12 w-12 text-slate-800" />
                   <div className="text-[9px] text-slate-500 font-bold">
-                    <p className="uppercase text-slate-700">SIECOPOL QR VALIDATION</p>
+                    <p className="uppercase text-slate-700">SIEXPOL QR VALIDATION</p>
                     <p className="font-mono mt-0.5">HASH: {validationCode}</p>
                     <p className="mt-0.5">Sincronizado vía Nube / Demo Local</p>
                   </div>
@@ -492,7 +492,7 @@ export default function ExamResults({ attempt, questions, onBackToDashboard }: E
                   </div>
                   <div className="border-t border-slate-400 pt-2 px-4">
                     <p className="text-slate-800">COMISIÓN EVALUADORA</p>
-                    <p className="text-[8px] text-slate-400 font-bold mt-1">SIECOPOL DIRREHUM PNP</p>
+                    <p className="text-[8px] text-slate-400 font-bold mt-1">SIEXPOL DIRREHUM PNP</p>
                   </div>
                 </div>
               </div>

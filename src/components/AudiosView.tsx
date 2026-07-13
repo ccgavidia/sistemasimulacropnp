@@ -350,32 +350,6 @@ export default function AudiosView({ questions = [], temas = [] }: AudiosViewPro
             </p>
           </div>
         </div>
-
-        {/* Dual Mode Switcher */}
-        <div className="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200 shrink-0 w-full md:w-auto">
-          <button
-            onClick={() => { stopAudio(); setActiveMode("preguntas"); }}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-xs font-black uppercase rounded-lg cursor-pointer transition-all ${
-              activeMode === "preguntas"
-                ? "bg-white text-[#063c25] shadow-sm border border-slate-150"
-                : "text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <HelpCircle className="h-4 w-4" />
-            Preguntas y Respuestas
-          </button>
-          <button
-            onClick={() => { stopAudio(); setActiveMode("articulos"); }}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-xs font-black uppercase rounded-lg cursor-pointer transition-all ${
-              activeMode === "articulos"
-                ? "bg-white text-[#063c25] shadow-sm border border-slate-150"
-                : "text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <BookOpen className="h-4 w-4" />
-            Resúmenes de Leyes
-          </button>
-        </div>
       </div>
 
       {/* Main Grid Layout */}

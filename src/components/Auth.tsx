@@ -22,13 +22,13 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
   const checkAndElevateUser = async (uid: string, data: Usuario): Promise<Usuario> => {
     const emailLower = (data.email || "").toLowerCase().trim();
-    const isAdminEmail = emailLower === "ccgavidia123@gmail.com";
+    const isAdminEmail = emailLower === "ccgavidia123@gmail.com" || emailLower === "admin@siecopol.com";
     if (isAdminEmail && (data.rol !== RolUsuario.ADMINISTRADOR || data.accesoCompleto !== true)) {
       const elevatedUser: Usuario = {
         ...data,
         rol: RolUsuario.ADMINISTRADOR,
         accesoCompleto: true,
-        nombre: data.nombre.includes("ADMINISTRADOR") ? data.nombre : `S2 PNP ${data.nombre.toUpperCase()} (ADMINISTRADOR)`
+        nombre: data.nombre.includes("ADMINISTRADOR") ? data.nombre : (emailLower === "ccgavidia123@gmail.com" ? `S2 PNP ${data.nombre.toUpperCase()} (ADMINISTRADOR)` : "ADMINISTRADOR SIEXPOL")
       };
       try {
         await setDoc(doc(db, "usuarios", uid), elevatedUser);
@@ -61,10 +61,12 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         } else {
           // If profile missing, create a default Usuario/Admin role
           const emailLower = email.toLowerCase().trim();
-          const isAdmin = emailLower === "ccgavidia123@gmail.com";
+          const isAdmin = emailLower === "ccgavidia123@gmail.com" || emailLower === "admin@siecopol.com";
           const defaultUser: Usuario = {
             uid,
-            nombre: isAdmin ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : email.split("@")[0],
+            nombre: isAdmin 
+              ? (emailLower === "ccgavidia123@gmail.com" ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : "ADMINISTRADOR SIEXPOL")
+              : email.split("@")[0],
             email,
             rol: isAdmin ? RolUsuario.ADMINISTRADOR : RolUsuario.USUARIO,
             fecha_registro: new Date().toISOString(),
@@ -88,7 +90,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
         const uid = userCredential.user.uid;
 
         const emailLower = email.toLowerCase().trim();
-        const isAdmin = emailLower === "ccgavidia123@gmail.com";
+        const isAdmin = emailLower === "ccgavidia123@gmail.com" || emailLower === "admin@siecopol.com";
         const newUser: Usuario = {
           uid,
           nombre,
@@ -145,7 +147,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
       } else {
         // If missing, create a default user profile
         const emailLower = email.toLowerCase().trim();
-        const isAdmin = emailLower === "ccgavidia123@gmail.com";
+        const isAdmin = emailLower === "ccgavidia123@gmail.com" || emailLower === "admin@siecopol.com";
         
         let parsedNombre = "Postulante";
         let parsedApellidos = "";
@@ -165,7 +167,9 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
 
         const newUser: Usuario = {
           uid,
-          nombre: isAdmin ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : parsedNombre,
+          nombre: isAdmin 
+            ? (emailLower === "ccgavidia123@gmail.com" ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : "ADMINISTRADOR SIEXPOL")
+            : parsedNombre,
           apellidos: parsedApellidos,
           email,
           rol: isAdmin ? RolUsuario.ADMINISTRADOR : rol, // Use currently selected role
@@ -201,7 +205,7 @@ export default function Auth({ onAuthSuccess }: AuthProps) {
             <GraduationCap className="h-7 w-7" />
           </div>
           <h2 className="text-xl font-black text-slate-800 tracking-tight uppercase" id="auth_title">
-            SIECOPOL 2026
+            SIEXPOL
           </h2>
           <p className="mt-1 text-xs text-slate-500 font-medium">
             {isLogin 

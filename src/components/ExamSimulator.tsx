@@ -41,7 +41,7 @@ export default function ExamSimulator({
 
   // Custom simulator configurations to match PNP layout and feature requests
   const [immediateFeedback, setImmediateFeedback] = useState(!realExamMode);
-  const [autoAdvance, setAutoAdvance] = useState(true);
+  const [autoAdvance, setAutoAdvance] = useState(false);
   const [showOnlyCorrect, setShowOnlyCorrect] = useState(false);
   const [showReference, setShowReference] = useState(!realExamMode);
   const [bookmarked, setBookmarked] = useState<{ [key: string]: boolean }>({});
@@ -347,7 +347,7 @@ export default function ExamSimulator({
             Examen
           </span>
           <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-200 font-black px-2 py-0.5 rounded-sm tracking-wider">
-            SIECOPOL 2.0
+            SIEXPOL 2.0
           </span>
         </div>
         
@@ -431,7 +431,7 @@ export default function ExamSimulator({
                   Tablero de Control
                 </span>
                 <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
-                  SIECOPOL CERTIFIED
+                  SIEXPOL CERTIFIED
                 </span>
               </div>
 
@@ -454,20 +454,6 @@ export default function ExamSimulator({
               </div>
 
               <div className="space-y-3.5 flex flex-col">
-                {/* 1. Con audio */}
-                <label className="flex items-center gap-3 py-2.5 px-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors border border-slate-100 shadow-3xs">
-                  <input
-                    type="checkbox"
-                    checked={!isMuted}
-                    onChange={(e) => {
-                      setIsMuted(!e.target.checked);
-                      playBeep();
-                    }}
-                    className="h-5 w-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-500"
-                  />
-                  <span className="text-xs font-bold text-slate-700">Con audio</span>
-                </label>
-
                 {/* 2. Respuesta inmediata */}
                 <label className={`flex items-center gap-3 py-2.5 px-3 rounded-xl transition-colors border border-slate-100 shadow-3xs ${
                   realExamMode ? 'opacity-60 cursor-not-allowed bg-slate-50' : 'hover:bg-slate-50 cursor-pointer'
@@ -750,7 +736,7 @@ export default function ExamSimulator({
                   Advertencia de Finalización
                 </h3>
                 <p className="text-[10px] font-black uppercase tracking-wider opacity-80">
-                  SIECOPOL • Dirección de Recursos Humanos PNP
+                  SIEXPOL • Dirección de Recursos Humanos PNP
                 </p>
               </div>
             </div>
@@ -805,7 +791,7 @@ export default function ExamSimulator({
                   CONFIRMACIÓN REFORZADA OBLIGATORIA
                 </h3>
                 <p className="text-[9px] font-bold uppercase tracking-wider opacity-80">
-                  SIECOPOL • Dirección de Recursos Humanos PNP
+                  SIEXPOL • Dirección de Recursos Humanos PNP
                 </p>
               </div>
             </div>

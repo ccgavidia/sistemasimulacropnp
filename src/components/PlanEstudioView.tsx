@@ -11,7 +11,7 @@ export default function PlanEstudioView({ temas }: PlanEstudioViewProps) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("siecopol_study_checklist");
+      const saved = localStorage.getItem("siexpol_study_checklist");
       if (saved) {
         setChecklist(JSON.parse(saved));
       } else {
@@ -37,7 +37,7 @@ export default function PlanEstudioView({ temas }: PlanEstudioViewProps) {
     };
     setChecklist(updated);
     try {
-      localStorage.setItem("siecopol_study_checklist", JSON.stringify(updated));
+      localStorage.setItem("siexpol_study_checklist", JSON.stringify(updated));
     } catch (e) {
       console.warn("Could not save study checklist:", e);
     }

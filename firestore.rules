@@ -1,10 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Global Safety Net: Default-deny catch-all
-    match /{document=**} {
-      allow read, write: if false;
-    }
 
     // Global helper functions
     function isSignedIn() {
@@ -17,52 +13,61 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn() && (
-        request.auth.token.email == "ccgavidia123@gmail.com" || 
-        request.auth.token.email == "admin@siecopol.com" ||
-        request.auth.token.email == "Ccgavidia123@gmail.com" ||
-        request.auth.token.email == "Admin@siecopol.com" ||
-        request.auth.token.email == "CCGAVIDIA123@GMAIL.COM" ||
-        request.auth.token.email == "ADMIN@SIECOPOL.COM" ||
-        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && (
-          get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "ADMINISTRADOR" || 
-          get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "Administrador"
-        ))
+        ('email' in request.auth.token && (
+          request.auth.token.email == "ccgavidia123@gmail.com" || 
+          request.auth.token.email == "Ccgavidia123@gmail.com" || 
+          request.auth.token.email == "CCGAVIDIA123@GMAIL.COM" || 
+          request.auth.token.email == "admin@siecopol.com" ||
+          request.auth.token.email == "Admin@siecopol.com" ||
+          request.auth.token.email == "ADMIN@SIECOPOL.COM" ||
+          request.auth.token.email.lower() == "ccgavidia123@gmail.com" || 
+          request.auth.token.email.lower() == "admin@siecopol.com"
+        )) ||
+        (exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) && 
+         'rol' in get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data && (
+           get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "ADMINISTRADOR" || 
+           get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "Administrador" ||
+           get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == "administrador" ||
+           get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol.lower() == "administrador"
+         )
+        )
       );
     }
 
-    // 1. Usuarios Collection
+    // 1. Usuarios Collection (Zero-Trust Private Data)
     match /usuarios/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+      allow read, write: if isSignedIn() && (isOwner(userId) || isAdmin());
     }
 
-    // 2. Preguntas Collection
+    // 2. Preguntas Collection (Global Public Content)
     match /preguntas/{preguntaId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 3. Intentos Collection
+    // 3. Intentos Collection (Zero-Trust Private Test History)
     match /intentos/{intentoId} {
-      allow read, write: if isAdmin();
-      allow create: if isSignedIn() && request.resource.data.usuario_id == request.auth.uid;
-      allow read: if isSignedIn() && (resource == null || resource.data.usuario_id == request.auth.uid);
+      allow create, update: if isSignedIn() && request.resource.data.usuario_id == request.auth.uid;
+      allow read: if isSignedIn() && (resource == null || resource.data.usuario_id == request.auth.uid || isAdmin());
+      allow delete: if isAdmin();
     }
 
-    // 4. Simulacros Collection
+    // 4. Simulacros Collection (Global Public Content)
     match /simulacros/{simulacroId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 5. Temas Collection
+    // 5. Temas Collection (Global Public Content)
     match /temas/{temaId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 6. Config Collection
+    // 6. Config Collection (Global Public Config)
     match /config/{configId} {
-      allow read, write: if isSignedIn();
+      allow read: if true;
+      allow write: if isSignedIn();
     }
   }
 }

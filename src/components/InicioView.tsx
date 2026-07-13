@@ -54,7 +54,7 @@ export default function InicioView({
             <span>{getMensajeAliento(user.grado)}</span>
           </p>
           <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
-            Plataforma oficial de entrenamiento y simulacros SIECOPOL. Prepárate con el temario legal y de conocimientos vigentes actualizados al concurso de ascenso 2026.
+            Plataforma oficial de entrenamiento y simulacros SIEXPOL. Prepárate con el temario legal y de conocimientos vigentes actualizados al concurso de ascenso 2026.
           </p>
         </div>
         <div className="h-14 w-14 rounded-full bg-emerald-800 text-white flex items-center justify-center font-extrabold text-xl shadow-md border-2 border-white">
@@ -74,7 +74,7 @@ export default function InicioView({
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
-            Simulador de Examen Oficial Completo - SIECOPOL
+            Simulador de Examen Oficial Completo - SIEXPOL
           </h2>
           <p className="text-xs text-emerald-100/80 font-medium max-w-3xl leading-relaxed">
             Rinde la simulación completa reglamentaria para calibrar tu nivel. Incluye temporizador real de 120 minutos, guardado inmediato de actas oficiales con firmas y control estricto de respuestas.

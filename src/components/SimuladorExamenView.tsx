@@ -72,7 +72,7 @@ export default function SimuladorExamenView({
 
   const availableQuestions = getAvailableQuestions();
 
-  const [activeSubTab, setActiveSubTab] = useState<"POR MATERIA" | "MIS ERRORES" | "PERSONALIZADO" | "SIECOPOL">("POR MATERIA");
+  const [activeSubTab, setActiveSubTab] = useState<"POR MATERIA" | "MIS ERRORES" | "PERSONALIZADO" | "SIEXPOL">("POR MATERIA");
   const [errorSearchQuery, setErrorSearchQuery] = useState("");
   const [errorDifficultyFilter, setErrorDifficultyFilter] = useState("Todas");
   const [errorTabMode, setErrorTabMode] = useState<"activos" | "resueltos">("activos");
@@ -296,8 +296,8 @@ export default function SimuladorExamenView({
     });
   };
 
-  // Generate Exam: SIECOPOL (Simulacro General de Admisión - Real Exam)
-  const handleGenerateSiecopol = () => {
+  // Generate Exam: SIEXPOL (Simulacro General de Admisión - Real Exam)
+  const handleGenerateSiexpol = () => {
     let pool = [...availableQuestions];
     if (pool.length === 0) {
       alert("No hay preguntas en el banco de preguntas.");
@@ -311,7 +311,7 @@ export default function SimuladorExamenView({
       const originalQ = shuffled[i % shuffled.length];
       assembled.push({
         ...originalQ,
-        id: `${originalQ.id}_siecopol_${assembled.length}`
+        id: `${originalQ.id}_siexpol_${assembled.length}`
       });
       i++;
     }
@@ -363,7 +363,7 @@ export default function SimuladorExamenView({
 
       {/* 2. Custom Tabs */}
       <div className="bg-slate-100/80 border border-slate-200/60 p-1.5 rounded-2xl flex flex-wrap gap-1" id="exam_sub_tabs">
-        {(["POR MATERIA", "MIS ERRORES", "PERSONALIZADO", "SIECOPOL"] as const).map(tab => (
+        {(["POR MATERIA", "MIS ERRORES", "PERSONALIZADO", "SIEXPOL"] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveSubTab(tab)}
@@ -938,8 +938,8 @@ export default function SimuladorExamenView({
             </div>
           )}
 
-          {/* TAB 4: SIECOPOL */}
-          {activeSubTab === "SIECOPOL" && (
+          {/* TAB 4: SIEXPOL */}
+          {activeSubTab === "SIEXPOL" && (
             <div className="space-y-6 max-w-3xl mx-auto py-4" id="siecopol_panel">
               <div className="text-center space-y-4">
                 <div className="mx-auto h-16 w-16 rounded-full bg-[#063c25]/10 border border-[#063c25]/20 flex items-center justify-center text-[#063c25] shadow-xs animate-pulse">
@@ -947,7 +947,7 @@ export default function SimuladorExamenView({
                 </div>
                 
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight">Simulacro General PNP - SIECOPOL 2026</h3>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight">Simulacro General PNP - SIEXPOL</h3>
                   <p className="text-xs text-slate-400 font-bold uppercase">Formato de Evaluación Oficial Rigurosa</p>
                 </div>
 
@@ -990,11 +990,11 @@ export default function SimuladorExamenView({
 
               {/* Start CTA */}
               <button
-                onClick={handleGenerateSiecopol}
+                onClick={handleGenerateSiexpol}
                 className="w-full py-4 bg-[#063c25] hover:bg-[#0a5434] text-white rounded-2xl font-black text-xs sm:text-sm uppercase tracking-widest transition-all shadow-md hover:shadow-lg hover:scale-[1.01] flex items-center justify-center gap-2 cursor-pointer focus:outline-none"
               >
                 <Play className="h-4 w-4 fill-current text-white shrink-0" />
-                COMENZAR SIMULACRO GENERAL SIECOPOL
+                COMENZAR SIMULACRO GENERAL SIEXPOL
               </button>
             </div>
           )}

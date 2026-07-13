@@ -10,7 +10,6 @@ import {
   Gamepad2, 
   Calendar, 
   Headphones, 
-  Download, 
   LogOut, 
   Settings, 
   ShieldAlert, 
@@ -57,7 +56,6 @@ export default function Layout({ user, activeTab, setActiveTab, onLogout, onTogg
     { id: "practicar_materias", label: "Prácticar por materias", icon: CheckSquare, roles: [RolUsuario.USUARIO, RolUsuario.ADMINISTRADOR] },
     { id: "zona_juego", label: "Zona de juego", icon: Gamepad2, roles: [RolUsuario.USUARIO, RolUsuario.ADMINISTRADOR], isNew: true },
     { id: "audios", label: "Audios", icon: Headphones, roles: [RolUsuario.USUARIO, RolUsuario.ADMINISTRADOR] },
-    { id: "descargas", label: "Descargas", icon: Download, roles: [RolUsuario.USUARIO, RolUsuario.ADMINISTRADOR] },
   ];
 
   const adminMenuItems = [
@@ -262,7 +260,7 @@ export default function Layout({ user, activeTab, setActiveTab, onLogout, onTogg
               S
             </div>
             <div>
-              <span className="text-sm font-black tracking-tight text-white block">SIECOPOL</span>
+              <span className="text-sm font-black tracking-tight text-white block">SIEXPOL</span>
               <span className="text-[8px] font-bold text-emerald-300 block uppercase tracking-wider -mt-1.5">Ascenso PNP</span>
             </div>
           </div>
@@ -417,7 +415,7 @@ export default function Layout({ user, activeTab, setActiveTab, onLogout, onTogg
 
             {/* Footer inside the view for seamless visual balance */}
             <footer className="pt-12 pb-6 text-center text-xs text-slate-400 border-t border-slate-200" id="layout_footer">
-              <p className="font-bold text-slate-500">SIECOPOL • Sistema de Simuladores de Ascenso PNP</p>
+              <p className="font-bold text-slate-500">SIEXPOL • Sistema de Simuladores de Ascenso PNP</p>
               <p className="mt-1 text-[10px]">Basado en el Temario Oficial y Leyes Vigentes. Dirección de Recursos Humanos de la Policía Nacional del Perú.</p>
             </footer>
           </div>

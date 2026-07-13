@@ -63,3 +63,14 @@ export interface SimulacroPersonalizado {
   fecha_creacion: string;
   preguntas_ids: string[]; // List of specific question IDs
 }
+
+export interface DocumentoDescarga {
+  id: string;
+  titulo: string;
+  formato: "PDF" | "DOCX";
+  peso: string;
+  descripcion: string;
+  url?: string;
+  fecha_creacion?: string;
+}
+

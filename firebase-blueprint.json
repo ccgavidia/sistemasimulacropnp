@@ -257,6 +257,49 @@
         "cantidadPreguntas",
         "rango"
       ]
+    },
+    "DocumentoDescarga": {
+      "title": "DocumentoDescarga",
+      "description": "Compendio de legislación o material de estudio subido por administradores.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único del documento."
+        },
+        "titulo": {
+          "type": "string",
+          "description": "Título descriptivo del archivo."
+        },
+        "formato": {
+          "type": "string",
+          "enum": ["PDF", "DOCX"],
+          "description": "Formato de archivo."
+        },
+        "peso": {
+          "type": "string",
+          "description": "Tamaño del archivo en formato amigable."
+        },
+        "descripcion": {
+          "type": "string",
+          "description": "Resumen o detalles del contenido."
+        },
+        "url": {
+          "type": "string",
+          "description": "Contenido base64 o URL directa del archivo."
+        },
+        "fecha_creacion": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha de carga."
+        }
+      },
+      "required": [
+        "titulo",
+        "formato",
+        "peso",
+        "descripcion"
+      ]
     }
   },
   "firestore": {

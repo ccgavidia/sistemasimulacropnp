@@ -26,7 +26,6 @@ import PracticaMateriasView from "./components/PracticaMateriasView";
 import ZonaJuegoView from "./components/ZonaJuegoView";
 import PlanEstudioView from "./components/PlanEstudioView";
 import AudiosView from "./components/AudiosView";
-import DescargasView from "./components/DescargasView";
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<Usuario | null>(null);
@@ -122,14 +121,19 @@ export default function App() {
           if (userDoc.exists()) {
             const userData = userDoc.data() as Usuario;
             const isAdminEmail = firebaseUser.email && (
-              firebaseUser.email.toLowerCase() === "ccgavidia123@gmail.com"
+              firebaseUser.email.toLowerCase() === "ccgavidia123@gmail.com" ||
+              firebaseUser.email.toLowerCase() === "admin@siecopol.com"
             );
             if (isAdminEmail && (userData.rol !== RolUsuario.ADMINISTRADOR || !userData.accesoCompleto)) {
               const updatedUser = { 
                 ...userData, 
                 rol: RolUsuario.ADMINISTRADOR,
                 accesoCompleto: true,
-                nombre: userData.nombre.includes("ADMINISTRADOR") ? userData.nombre : `S2 PNP ${userData.nombre.toUpperCase()} (ADMINISTRADOR)`
+                nombre: userData.nombre.includes("ADMINISTRADOR") 
+                  ? userData.nombre 
+                  : (firebaseUser.email?.toLowerCase() === "ccgavidia123@gmail.com" 
+                     ? `S2 PNP ${userData.nombre.toUpperCase()} (ADMINISTRADOR)` 
+                     : "ADMINISTRADOR SIEXPOL")
               };
               try {
                 await setDoc(doc(db, "usuarios", firebaseUser.uid), updatedUser);
@@ -143,11 +147,14 @@ export default function App() {
           } else {
             // Default profile creation if missing
             const isAdminEmail = firebaseUser.email && (
-              firebaseUser.email.toLowerCase() === "ccgavidia123@gmail.com"
+              firebaseUser.email.toLowerCase() === "ccgavidia123@gmail.com" ||
+              firebaseUser.email.toLowerCase() === "admin@siecopol.com"
             );
             const defaultUser: Usuario = {
               uid: firebaseUser.uid,
-              nombre: isAdminEmail ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : (firebaseUser.email?.split("@")[0].toUpperCase() || "Postulante"),
+              nombre: isAdminEmail 
+                ? (firebaseUser.email?.toLowerCase() === "ccgavidia123@gmail.com" ? "CORONEL PNP CCGAVIDIA (ADMINISTRADOR)" : "ADMINISTRADOR SIEXPOL")
+                : (firebaseUser.email?.split("@")[0].toUpperCase() || "Postulante"),
               email: firebaseUser.email || "",
               rol: isAdminEmail ? RolUsuario.ADMINISTRADOR : RolUsuario.USUARIO,
               fecha_registro: new Date().toISOString(),
@@ -719,7 +726,7 @@ export default function App() {
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         onLogout={() => setCurrentUser(null)} 
-        onToggleRole={(currentUser.email?.toLowerCase() === "ccgavidia123@gmail.com") ? toggleDemoRole : undefined}
+        onToggleRole={(currentUser.email?.toLowerCase() === "ccgavidia123@gmail.com" || currentUser.email?.toLowerCase() === "admin@siecopol.com") ? toggleDemoRole : undefined}
       >
         <ExamResults
           attempt={activeExamResults}
@@ -759,7 +766,7 @@ export default function App() {
       activeTab={activeTab} 
       setActiveTab={setActiveTab} 
       onLogout={handleLogout} 
-      onToggleRole={(currentUser.email?.toLowerCase() === "ccgavidia123@gmail.com") ? toggleDemoRole : undefined}
+      onToggleRole={(currentUser.email?.toLowerCase() === "ccgavidia123@gmail.com" || currentUser.email?.toLowerCase() === "admin@siecopol.com") ? toggleDemoRole : undefined}
     >
       
       {activeTab === "inicio" && (
@@ -855,10 +862,6 @@ export default function App() {
 
       {activeTab === "audios" && (
         <AudiosView questions={questions} temas={temas} />
-      )}
-
-      {activeTab === "descargas" && (
-        <DescargasView />
       )}
 
       {activeTab === "historial" && (

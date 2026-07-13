@@ -126,7 +126,7 @@ export default function BancoPreguntasView({ temas, questions, onStartExamFlow, 
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Buscar en preguntas, alternativas o justificaciones..."
+              placeholder="Buscar en preguntas o alternativas..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent transition-all"
@@ -181,11 +181,6 @@ export default function BancoPreguntasView({ temas, questions, onStartExamFlow, 
                           {q.tema}
                         </span>
                       )}
-                      {(q.ubicacion || q.codigo) && (
-                        <span className="text-[10px] bg-teal-50 text-teal-800 border border-teal-200 font-black px-2.5 py-0.5 rounded-md uppercase font-mono">
-                          {q.ubicacion || q.codigo}
-                        </span>
-                      )}
                     </div>
                     
                     <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
@@ -238,34 +233,6 @@ export default function BancoPreguntasView({ temas, questions, onStartExamFlow, 
                       );
                     })}
                   </div>
-
-                  {/* Reference / Explanation Card Detail */}
-                  {(q.explicacion || q.ubicacion || q.codigo) && (
-                    <div className="bg-amber-50/40 border border-amber-200/60 rounded-2xl p-4 space-y-2">
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/30 pb-1.5">
-                        <div className="flex items-center gap-2 text-amber-800">
-                          <FileText className="h-4 w-4 shrink-0" />
-                          <span className="text-[10px] font-black uppercase tracking-wider">
-                            Referencia y Sustento Legal:
-                          </span>
-                        </div>
-                        {(q.ubicacion || q.codigo) && (
-                          <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-200 font-black px-2.5 py-0.5 rounded-md uppercase font-mono">
-                            {q.ubicacion || q.codigo}
-                          </span>
-                        )}
-                      </div>
-                      {q.explicacion ? (
-                        <p className="text-xs font-bold text-slate-700 uppercase leading-relaxed">
-                          {q.explicacion}
-                        </p>
-                      ) : (
-                        <p className="text-xs font-bold text-slate-500 uppercase italic">
-                          Ubicación constitucional/legal: {q.ubicacion || q.codigo}
-                        </p>
-                      )}
-                    </div>
-                  )}
                 </div>
               );
             })
