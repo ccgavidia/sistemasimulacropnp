@@ -69,5 +69,11 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isSignedIn();
     }
+
+    // 7. Bloqueados Collection (Blacklist check)
+    match /bloqueados/{email} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
   }
 }

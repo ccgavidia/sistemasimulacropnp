@@ -106,6 +106,23 @@ export default function App() {
       if (firebaseUser) {
         setAuthChecking(true);
         try {
+          // Check if user is blocked
+          if (firebaseUser.email) {
+            const cleanEmail = firebaseUser.email.trim().toLowerCase();
+            try {
+              const blockDoc = await getDoc(doc(db, "bloqueados", cleanEmail));
+              if (blockDoc.exists()) {
+                setInitError("ACCESO_BLOQUEADO");
+                await signOut(auth);
+                setCurrentUser(null);
+                setAuthChecking(false);
+                return;
+              }
+            } catch (err) {
+              console.warn("Could not check blocked list:", err);
+            }
+          }
+
           let userDoc;
           try {
             userDoc = await getDoc(doc(db, "usuarios", firebaseUser.uid));
@@ -644,7 +661,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               onClick={() => {
-                navigator.clipboard.writeText(`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if false;\n    }\n    function isSignedIn() {\n      return request.auth != null;\n    }\n    function isOwner(userId) {\n      return isSignedIn() && request.auth.uid == userId;\n    }\n    function isAdmin() {\n      return isSignedIn() && (\n        request.auth.token.email == "ccgavidia123@gmail.com" || \n        request.auth.token.email == "admin@siecopol.com" ||\n        request.auth.token.email == "Ccgavidia123@gmail.com" ||\n        request.auth.token.email == "Admin@siecopol.com" ||\n        request.auth.token.email == "CCGAVIDIA123@GMAIL.COM" ||\n        request.auth.token.email == "ADMIN@SIECOPOL.COM" ||\n        (exists(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)) && (\n          get(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)).data.rol == "ADMINISTRADOR" || \n          get(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)).data.rol == "Administrador"\n        ))\n      );\n    }\n    match /usuarios/{userId} {\n      allow read, write: if isOwner(userId) || isAdmin();\n    }\n    match /preguntas/{preguntaId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /intentos/{intentoId} {\n      allow read, write: if isAdmin();\n      allow create: if isSignedIn() && request.resource.data.usuario_id == request.auth.uid;\n      allow read: if isSignedIn() && (resource == null || resource.data.usuario_id == request.auth.uid);\n    }\n    match /simulacros/{simulacroId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /temas/{temaId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /config/{configId} {\n      allow read, write: if isSignedIn();\n    }\n  }\n}`);
+                navigator.clipboard.writeText(`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if false;\n    }\n    function isSignedIn() {\n      return request.auth != null;\n    }\n    function isOwner(userId) {\n      return isSignedIn() && request.auth.uid == userId;\n    }\n    function isAdmin() {\n      return isSignedIn() && (\n        request.auth.token.email == "ccgavidia123@gmail.com" || \n        request.auth.token.email == "admin@siecopol.com" ||\n        request.auth.token.email == "Ccgavidia123@gmail.com" ||\n        request.auth.token.email == "Admin@siecopol.com" ||\n        request.auth.token.email == "CCGAVIDIA123@GMAIL.COM" ||\n        request.auth.token.email == "ADMIN@SIECOPOL.COM" ||\n        (exists(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)) && (\n          get(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)).data.rol == "ADMINISTRADOR" || \n          get(/databases/\$(database)/documents/usuarios/\$(request.auth.uid)).data.rol == "Administrador"\n        ))\n      );\n    }\n    match /usuarios/{userId} {\n      allow read, write: if isOwner(userId) || isAdmin();\n    }\n    match /preguntas/{preguntaId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /intentos/{intentoId} {\n      allow read, write: if isAdmin();\n      allow create: if isSignedIn() && request.resource.data.usuario_id == request.auth.uid;\n      allow read: if isSignedIn() && (resource == null || resource.data.usuario_id == request.auth.uid);\n    }\n    match /simulacros/{simulacroId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /temas/{temaId} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n    match /config/{configId} {\n      allow read, write: if isSignedIn();\n    }\n    match /bloqueados/{email} {\n      allow read: if isSignedIn();\n      allow write: if isAdmin();\n    }\n  }\n}`);
                 alert("¡Reglas de Seguridad copiadas al portapapeles con éxito! Ve y pégalas en la pestaña Reglas de tu Firestore Database y haz clic en Publicar.");
               }}
               className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 hover:bg-slate-200 text-center cursor-pointer transition-all border border-slate-300"
@@ -660,6 +677,44 @@ export default function App() {
               className="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-700 text-center cursor-pointer transition-all shadow-md"
             >
               Reintentar Conexión
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render blocked account screen
+  if (initError === "ACCESO_BLOQUEADO") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8 font-sans">
+        <div className="max-w-md w-full space-y-6 bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-slate-200 animate-fade-in text-center">
+          <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-xl bg-red-100 text-red-700 mb-4 border border-red-200 animate-bounce">
+            <ShieldAlert className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-black text-slate-800 tracking-tight uppercase">
+            Acceso Bloqueado 🛑
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 font-bold leading-relaxed">
+            Tu correo electrónico ha sido bloqueado por el administrador de SIEXPOL.
+          </p>
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-150 text-xs text-slate-500 space-y-1 text-left font-medium">
+            <span className="block font-bold text-slate-700">📌 Información de soporte:</span>
+            <p>Si consideras que esto es un error o deseas volver a habilitar tu cuenta de postulante, ponte en contacto directo con soporte al celular:</p>
+            <span className="block font-black text-slate-900 mt-1.5 text-center bg-white p-2 rounded border border-slate-200 text-sm">
+              📲 931 238 088
+            </span>
+          </div>
+          <div className="pt-2">
+            <button
+              onClick={() => {
+                setInitError(null);
+                setAuthChecking(false);
+                window.location.reload();
+              }}
+              className="w-full px-6 py-2.5 bg-[#063c25] hover:bg-[#042819] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md"
+            >
+              Regresar al Inicio
             </button>
           </div>
         </div>

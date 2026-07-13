@@ -133,6 +133,7 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ user, questions, onRefreshQuestions, temas, onRefreshTemas }: AdminDashboardProps) {
   const [users, setUsers] = useState<Usuario[]>([]);
+  const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
   const [activeSubTab, setActiveTab] = useState<"questions" | "users" | "custom_mocks">("questions");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -205,6 +206,15 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
       usersLoaded = true;
     } catch (err: any) {
       console.error("Error loading admin users:", err);
+    }
+
+    // 1b. Fetch Blocked Users
+    try {
+      const blockedSnapshot = await getDocs(collection(db, "bloqueados"));
+      const blockedList = blockedSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setBlockedUsers(blockedList);
+    } catch (err: any) {
+      console.error("Error loading blocked users:", err);
     }
 
     // 2. Fetch Mocks
@@ -354,6 +364,58 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
     } catch (err: any) {
       console.error(err);
       showMsg(`Error al cambiar el nivel de acceso: ${err.message}`, "error");
+    }
+  };
+
+  const handleDeleteUser = async (targetUser: Usuario) => {
+    if (!window.confirm(`¿Estás seguro de ELIMINAR a ${targetUser.nombre} de la base de datos?\n\nSu cuenta se eliminará, pero podrá registrarse nuevamente en el futuro.`)) return;
+
+    try {
+      await deleteDoc(doc(db, "usuarios", targetUser.uid));
+      showMsg("Usuario eliminado de la base de datos con éxito.", "success");
+      await fetchAdminData();
+    } catch (err: any) {
+      console.error(err);
+      showMsg(`Error al eliminar usuario: ${err.message}`, "error");
+    }
+  };
+
+  const handleDeleteAndBlockUser = async (targetUser: Usuario) => {
+    if (!window.confirm(`¿Estás completamente seguro de ELIMINAR Y BLOQUEAR a ${targetUser.nombre}?\n\nEsto eliminará su cuenta actual de la base de datos y registrará su correo (${targetUser.email}) en la lista negra. No podrá volver a ingresar al sistema.`)) return;
+
+    try {
+      // Delete user doc
+      await deleteDoc(doc(db, "usuarios", targetUser.uid));
+
+      // Block email
+      if (targetUser.email) {
+        const cleanEmail = targetUser.email.trim().toLowerCase();
+        await setDoc(doc(db, "bloqueados", cleanEmail), {
+          email: cleanEmail,
+          nombre_anterior: targetUser.nombre,
+          fecha_bloqueo: new Date().toISOString(),
+          uid_anterior: targetUser.uid
+        });
+      }
+
+      showMsg("Usuario eliminado y correo bloqueado permanentemente.", "success");
+      await fetchAdminData();
+    } catch (err: any) {
+      console.error(err);
+      showMsg(`Error al eliminar y bloquear usuario: ${err.message}`, "error");
+    }
+  };
+
+  const handleUnblockUser = async (email: string) => {
+    if (!window.confirm(`¿Deseas desbloquear el correo ${email}?\n\nEsto le permitirá registrarse e ingresar al sistema de nuevo.`)) return;
+
+    try {
+      await deleteDoc(doc(db, "bloqueados", email));
+      showMsg("Correo electrónico desbloqueado con éxito.", "success");
+      await fetchAdminData();
+    } catch (err: any) {
+      console.error(err);
+      showMsg(`Error al desbloquear correo: ${err.message}`, "error");
     }
   };
 
@@ -1618,7 +1680,7 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
                     </td>
                     <td className="px-6 py-4 text-right">
                       {targetUser.uid !== user.uid ? (
-                        <div className="flex justify-end gap-3">
+                        <div className="flex flex-wrap justify-end items-center gap-2 sm:gap-3">
                           <button
                             onClick={() => handleToggleRole(targetUser)}
                             className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors focus:outline-none"
@@ -1633,6 +1695,20 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
                           >
                             {targetUser.accesoCompleto ? "Degradar a Demo" : "Habilitar Acceso"}
                           </button>
+                          <button
+                            onClick={() => handleDeleteUser(targetUser)}
+                            className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors focus:outline-none"
+                            id={`delete_user_btn_${targetUser.uid}`}
+                          >
+                            Eliminar
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAndBlockUser(targetUser)}
+                            className="text-xs font-extrabold text-red-700 hover:text-red-900 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 px-2 py-1 rounded-lg transition-all focus:outline-none"
+                            id={`block_user_btn_${targetUser.uid}`}
+                          >
+                            Eliminar y Bloquear
+                          </button>
                         </div>
                       ) : (
                         <span className="text-xs text-gray-400">Tú (Propietario)</span>
@@ -1642,6 +1718,52 @@ export default function AdminDashboard({ user, questions, onRefreshQuestions, te
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Blocked Users Blacklist Section */}
+          <div className="pt-6 border-t border-gray-150">
+            <h3 className="text-sm font-black text-red-800 uppercase tracking-tight flex items-center gap-1.5 mb-4">
+              <ShieldAlert className="h-4 w-4 text-red-600 shrink-0 animate-pulse" />
+              Lista Negra / Correos Bloqueados ({blockedUsers.length})
+            </h3>
+            
+            {blockedUsers.length === 0 ? (
+              <p className="text-xs text-gray-500 bg-gray-50 p-4 rounded-xl border border-gray-150 font-semibold">
+                No hay ningún correo electrónico bloqueado en el sistema actualmente.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-xs text-left">
+                  <thead>
+                    <tr className="text-[10px] font-bold text-gray-400 uppercase bg-gray-50">
+                      <th className="px-6 py-3 rounded-l-lg">Correo Bloqueado</th>
+                      <th className="px-6 py-3">Nombre Anterior</th>
+                      <th className="px-6 py-3">Fecha de Bloqueo</th>
+                      <th className="px-6 py-3 text-right rounded-r-lg">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-150 font-semibold text-gray-700">
+                    {blockedUsers.map((blocked) => (
+                      <tr key={blocked.id} className="hover:bg-red-50/20 transition-colors">
+                        <td className="px-6 py-4 font-bold text-red-700">{blocked.email}</td>
+                        <td className="px-6 py-4 text-gray-600">{blocked.nombre_anterior || "N/A"}</td>
+                        <td className="px-6 py-4 text-xs text-gray-400">
+                          {formatFechaUsuario(blocked.fecha_bloqueo)}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={() => handleUnblockUser(blocked.id)}
+                            className="text-xs font-black text-emerald-600 hover:text-emerald-800 border border-emerald-200 hover:border-emerald-300 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-lg transition-all focus:outline-none animate-pulse"
+                          >
+                            Desbloquear
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}
