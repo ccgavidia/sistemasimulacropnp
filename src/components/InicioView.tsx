@@ -1,5 +1,5 @@
 import React from "react";
-import { Star, HelpCircle, Hourglass, Play, BarChart3, TrendingUp, Award, CheckCircle2 } from "lucide-react";
+import { Star, HelpCircle, Hourglass, Play, BarChart3, TrendingUp, Award, CheckCircle2, MessageCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { ExamenIntento, Usuario } from "../types";
 
 interface InicioViewProps {
@@ -61,6 +61,30 @@ export default function InicioView({
           {user.nombre.charAt(0).toUpperCase()}
         </div>
       </div>
+
+      {!user.accesoCompleto && user.uid !== "demo_admin_uid" && (
+        <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in" id="inicio_demo_banner">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="font-bold text-slate-800 text-sm flex items-center justify-center md:justify-start gap-1.5">
+              <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
+              Acceso de Demostración Limitado
+            </h3>
+            <p className="text-[11px] text-slate-500 leading-normal max-w-2xl">
+              Estás en modo de prueba. Para desbloquear todos los simulacros oficiales, plan de estudio completo, audios y registrar tus calificaciones de forma permanente, solicita tu <strong>Acceso Completo</strong> comunicándote al <strong>931 238 088</strong> o tocando el botón de WhatsApp.
+            </p>
+          </div>
+          <a
+            href="https://wa.me/51931238088?text=quiero%20acceso%20completo%20al%20SIEXPOL"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-5 rounded-xl text-xs flex items-center justify-center gap-2 shrink-0 transition-all shadow-md hover:scale-[1.01] cursor-pointer animate-pulse"
+          >
+            <MessageCircle className="h-4 w-4 fill-current text-white shrink-0" />
+            <span>QUIERO ACCESO COMPLETO</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      )}
 
       {/* Recommended Exam Box */}
       <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 border border-emerald-800 rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6" id="inicio_exam_launcher">

@@ -171,14 +171,14 @@ export default function MiHistorial({ user, questions }: MiHistorialProps) {
               Modo de Demostración Activo
             </h3>
             <p className="text-[11px] text-slate-500 leading-normal max-w-2xl">
-              Tus estadísticas, intentos de exámenes y banco de errores se almacenan localmente en este navegador. Para sincronizarlos permanentemente en la nube y desbloquear simulaciones oficiales completas con firmas, solicita el <strong>Acceso Completo</strong> al administrador.
+              Tus estadísticas, intentos de exámenes y banco de errores se almacenan localmente en este navegador. Para sincronizarlos permanentemente en la nube y desbloquear simulaciones oficiales completas con firmas, solicita el <strong>Acceso Completo</strong> comunicándote al <strong>931 238 088</strong>.
             </p>
           </div>
           <a
-            href="https://wa.me/51956784321?text=Hola%20Coronel%20PNP%20CCGAVIDIA,%20solicito%20el%20Acceso%20Completo%20para%20el%20sistema%20de%20simulacros%20SIEXPOL."
+            href="https://wa.me/51931238088?text=quiero%20acceso%20completo%20al%20SIEXPOL"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl text-xs flex items-center gap-1.5 shrink-0 transition-all shadow-md hover:scale-[1.01] cursor-pointer"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl text-xs flex items-center gap-1.5 shrink-0 transition-all shadow-md hover:scale-[1.01] cursor-pointer animate-pulse"
           >
             <span>SOLICITAR ACCESO COMPLETO</span>
             <ArrowRight className="h-3.5 w-3.5" />
