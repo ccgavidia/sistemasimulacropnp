@@ -99,8 +99,7 @@ export default function PracticaMateriasView({ temas, questions, onStartExamFlow
                   ) : countLoaded > 0 ? (
                     <button
                       onClick={() => {
-                        const qCount = !hasFullAccess ? 10 : 15;
-                        onStartExamFlow(qCount, topic.abreviatura, selectedDiff);
+                        onStartExamFlow(countLoaded, topic.abreviatura, selectedDiff);
                       }}
                       className="px-4 py-2 bg-[#063c25] hover:bg-[#0a5434] text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-colors cursor-pointer"
                     >

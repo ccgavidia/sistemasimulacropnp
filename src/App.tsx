@@ -728,7 +728,7 @@ export default function App() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 font-sans">
         <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
         <p className="mt-4 text-sm font-bold text-gray-600 uppercase tracking-widest">
-          Sincronizando Sistema Policial...
+          Sincronizando Simulador de Examen Policial...
         </p>
       </div>
     );

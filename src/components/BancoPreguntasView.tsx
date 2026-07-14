@@ -108,8 +108,8 @@ export default function BancoPreguntasView({ temas, questions, onStartExamFlow, 
             {/* Start Practice Option for this topic */}
             <button
               onClick={() => {
-                const qCount = !hasFullAccess ? 10 : 20;
-                onStartExamFlow(qCount, selectedTopic.abreviatura, "Todas");
+                const countLoaded = hasFullAccess ? topicQuestions.length : Math.min(topicQuestions.length, 10);
+                onStartExamFlow(countLoaded, selectedTopic.abreviatura, "Todas");
               }}
               className="bg-emerald-800 hover:bg-emerald-900 text-white font-black text-xs py-3 px-5 rounded-xl uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-700"
             >
