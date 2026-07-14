@@ -72,7 +72,7 @@ service cloud.firestore {
 
     // 7. Bloqueados Collection (Blacklist check)
     match /bloqueados/{email} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
   }
